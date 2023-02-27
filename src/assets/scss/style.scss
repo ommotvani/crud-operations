@@ -1,0 +1,19 @@
+
+input{
+width:63%;
+font-weight:400;
+}
+.modal-backdrop.fade{
+    opacity: 0.09;
+}
+.formField{
+    display: flex;
+  justify-content: end;
+  margin-bottom: 30px;
+}
+label{
+    padding-right: 10px;
+}
+span{
+    padding-right:3px;
+}

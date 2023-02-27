@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { HeartFilled, EditOutlined, DeleteOutlined, HeartOutlined, MailOutlined, PhoneOutlined, GlobalOutlined, } from '@ant-design/icons';
+import { HeartFilled, EditOutlined, DeleteFilled, HeartOutlined, MailOutlined, PhoneOutlined, GlobalOutlined, } from '@ant-design/icons';
 import { Card } from 'antd';
 import { useState } from 'react';
-import { deleteData, getposts, likeButton, updateData } from "../redux/feature/dataSlice";
+import { deleteData, getposts, likeButton } from "../redux/feature/dataSlice";
 import FormData from "./FormData";
 
 
@@ -11,87 +11,94 @@ import FormData from "./FormData";
 
 function CardData() {
     const [istoggle, setIstoggle] = useState(true)
-    const [loading, setLoading] = useState(false);
     const { posts } = useSelector((state) => state.data);
-    const [open, setOpen] = useState(false)
+    const [show, setShow] = useState(false);
     const [person, setPerson] = useState({})
+
     const dispatch = useDispatch();
 
-
+//handle edit for pass data in form 
     const handleEdit = (element) => {
         setPerson({})
-        setOpen(!open)
+        setShow(!show)
         if (element) {
             setPerson(element)
         }
     }
+
+
+    // handle heart for handle like 
+
+
     const handleheart = (item) => {
         dispatch(likeButton(item))
         setIstoggle(!istoggle)
-        console.log(item)
     }
+
+
+
+    //deletecard for delete particular card
 
     const deleteCard = (id) => {
         dispatch(deleteData(id))
     }
 
-
+//get data and dispatch in useeffect
     useEffect(() => {
         dispatch(getposts());
-    }, []);
+    },[]);
 
     return (
         <>
-            {posts.map((element) => (
-
-                <div className="row">
+            <div className="row">
+                {posts.map((element) => (
                     <div className="col-md-3">
+
+                    
                         <Card
                             key={element.id}
                             style={{
                                 width: 300,
                                 marginTop: 16,
                             }}
+
+    
                             actions={[
                                 !element.like ? <HeartOutlined style={{ color: "#ff0000" }} onClick={() => handleheart(element.id)} />
-                                    : <HeartFilled onClick={() => handleheart(element.id)} style={{ color: "#ff0000" }} />,
-
-
+                              : <HeartFilled onClick={() => handleheart(element.id)} style={{ color: "#ff0000" }} />,
                                 <EditOutlined key="edit" onClick={() => handleEdit(element)} />,
-                                <DeleteOutlined key="Delete" onClick={() => deleteCard(element.id)} />,
+                                <DeleteFilled key="Delete" onClick={() => deleteCard(element.id)} />,
                             ]}
+
                             cover={<img alt="example" src={`https://avatars.dicebear.com/v2/avataaars/${element.username}.svg?options[mood][]=happy`} />}
                         >
                             <div className="persondata">
                                 <h4>{element.name}</h4>
+
                                 <div>
-                                    <span>
-                                        <MailOutlined /> {element.email}
-                                    </span>
+                                    <span>  <MailOutlined />  </span> {element.email}
                                 </div>
+
                                 <div>
-                                    <span>
-                                        <PhoneOutlined />{element.phone}
-                                    </span>
+                                    <span>  <PhoneOutlined />  </span> {element.phone}
                                 </div>
+
                                 <div>
-                                    <span>
-                                        <GlobalOutlined /> {element.website}
-                                    </span>
+                                    <span>   <GlobalOutlined /> {element.website} </span>
                                 </div>
 
                             </div>
 
 
-                         
+
 
                         </Card>
+                        <FormData show={show} toggleModel={handleEdit} person={person} />
                     </div>
-                    <FormData open={open} toggleModel={handleEdit} person={person} />
-                </div>
 
-            ))
-            }
+                ))
+                }
+            </div>
 
         </>
     );

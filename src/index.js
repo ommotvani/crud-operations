@@ -5,6 +5,7 @@ import App from './App';
 import {store} from './redux/store'
 import {Provider} from 'react-redux'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../src/assets/scss/style.scss'
 
 
 

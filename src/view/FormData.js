@@ -2,19 +2,18 @@ import { ErrorMessage, Field, Formik, Form } from 'formik';
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from "yup"
-import { getposts,updateData} from "../redux/feature/dataSlice";
-import { Button, Modal } from 'antd';
+import { getposts, updateData } from "../redux/feature/dataSlice";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-
-function FormData({ open, toggleModel, person }) {
+function FormData({ show, toggleModel, person }) {
   const { posts } = useSelector((state) => state.data);
 
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getposts());
-  }, []);
 
+    //pass value in form 
+  const dispatch = useDispatch();
+  useEffect(() => { dispatch(getposts()); }, []);
   const initialValues = {
     name: person.name,
     email: person.email,
@@ -22,91 +21,91 @@ function FormData({ open, toggleModel, person }) {
     website: person.website,
   }
 
-  
+
+
+     //validation using yup
 
   const valiadationschema = Yup.object({
     name: Yup.string().required("Required"),
     email: Yup.string().email("invalid formate").required("Required"),
-    phoneno: Yup.number().min(10
-    ).max(12).required("Required"),
-    website: Yup.string().url().nullable(),
+    phoneno: Yup.string().required("Required"),
+    website: Yup.string().required("Required"),
   })
-  const handleOk = () => {
-    handleSubmit()
-  };
-  // const handleCancel = () => {
-    
-  // };
-  const editModel = (element) => {
-    console.log(element.target.value)
+
+
+    //update form data
+
+  const handleSubmit = (values) => {
+    const requestData = { id: person.id, ...values }
+    dispatch(updateData(requestData))
+    toggleModel()
   }
-
- const handleSubmit = (values)=>{
-  const requestData= {id:person.id,...values}
-  dispatch(updateData(requestData))
-  toggleModel()
- }
-
   return (
-    <Modal
-      title=""
-      centered
-      open={open}
-      onOk={handleOk}
-      onCancel={toggleModel}
-      width={500}
-      footer={[
-        <Button key="back" onClick={toggleModel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="submit" onClick={handleOk}>
-          Submit
-        </Button>,
-        
-      ]}
-    >
-      <div>
-        <Formik
-        enableReinitialize
-          initialValues={initialValues}
-          // validationSchema={valiadationschema}
-          onSubmit={handleSubmit}
-        >
-          {({
-            values,
-            handleSubmit,
-          }) => (
-            <Form key={posts.id} onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="name">Name:</label>
-                <Field type="name" name="name" />
-                <ErrorMessage name="name" />
-              </div>
 
-              <div>
-                <label htmlFor="email">Email:</label>
-                <Field type="email" name="email" />
-                <ErrorMessage name="email" component="div" />
-              </div>
-              <div>
-                <label htmlFor="phoneno">Phoneno:</label>
-                <Field type="phoneno" name="phoneno" />
-                <ErrorMessage name="phoneno" />
-              </div>
-              <div>
-                <label htmlFor="Website">Website:</label>
-                <Field type="website" name="website" />
-                <ErrorMessage name="Website" />
+    <div>
+      <div className="modal show"
+        style={{ display: 'block', position: 'initial' }}>
+        <Modal show={show} onHide={toggleModel}>
+          <Modal.Header closeButton>
+            <Modal.Title>Basic Model</Modal.Title>
+          </Modal.Header>
 
-              </div>
-                <Button type='submit' onClick={handleSubmit}>save</Button>
-            </Form>
-          )}
-        </Formik>
+          <Modal.Body className='p-0'>
+            <Formik
+              enableReinitialize initialValues={initialValues}
+              validationSchema={valiadationschema}
+              onSubmit={handleSubmit} >
+              {({ values, handleSubmit, }) => (<Form key={posts.id} onSubmit={handleSubmit}>
+
+
+                <div className='formcontent m-4'>
+                  <div className='formField'>
+                    <span className='text-danger'>*</span> <label htmlFor="name">Name:</label>
+                    <Field type="name" name="name" />
+                    <ErrorMessage name="name" />
+                  </div>
+
+
+
+                  <div className='formField'>
+                    <span className='text-danger'>*</span><label htmlFor="email">Email:</label>
+                    <Field type="email" name="email" />
+                    <ErrorMessage name="email" component="div" />
+                  </div>
+
+
+
+                  <div className='formField'>
+                    <span className='text-danger'>*</span> <label htmlFor="phoneno">Phoneno:</label>
+                    <Field type="phoneno" name="phoneno" />
+                    <ErrorMessage name="phoneno" />
+                  </div>
+
+
+
+                  <div className='formField'>
+                    <span className='text-danger'>*</span> <label htmlFor="Website">Website:</label>
+                    <Field type="text" name="website" />
+                    <ErrorMessage name="Website" />
+                  </div>
+
+
+
+
+                </div>
+                            {/* footer section of like and cancle  */}
+                <Modal.Footer>
+                  <Button variant="outline-primary" onClick={toggleModel}>Cancle</Button>
+                  <Button type='submit' onClick={handleSubmit}>Ok</Button>
+                </Modal.Footer>
+              </Form>
+              )}
+
+            </Formik>
+          </Modal.Body>
+        </Modal>
       </div>
-    </Modal>
-
+    </div>
   )
 }
-
 export default FormData
